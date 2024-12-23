@@ -1,0 +1,1 @@
+# gerador_de_prompt__segmento_desafio
