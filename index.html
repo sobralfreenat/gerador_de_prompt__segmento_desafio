@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerador de Prompt para IA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        textarea {
+            height: 150px;
+        }
+        .action-buttons {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Gerador de Prompt para IA</h1>
+
+<form id="form">
+    <label for="segmento">Segmento:</label>
+    <input type="text" id="segmento" placeholder="Ex: Empresa de Desenvolvimento de Software Customizado" required>
+
+    <label for="cnae">CNAE:</label>
+    <input type="text" id="cnae" placeholder="Ex: 6201-5/01" required>
+
+    <label for="fase">Fase do Negócio:</label>
+    <select id="fase" required>
+        <option value="Construção">Construção</option>
+        <option value="Consolidação">Consolidação</option>
+        <option value="Crescimento">Crescimento</option>
+    </select>
+
+    <label for="desafio">Desafio:</label>
+    <textarea id="desafio" placeholder="Descreva o desafio ou escolha 'Quero sugestão baseada nas informações'" required></textarea>
+
+    <button type="button" onclick="gerarPrompt()">Gerar Prompt</button>
+</form>
+
+<div class="output">
+    <h3>Prompt Gerado:</h3>
+    <textarea id="promptOutput" readonly></textarea>
+    <div class="action-buttons">
+        <button type="button" onclick="aceitarSugestao()">Aceitar Sugestão de Desafio</button> <br><br>
+        <button type="button" onclick="copiarPrompt()">Copiar Prompt para Clipboard</button>
+    </div>
+</div>
+
+<script>
+    function gerarPrompt() {
+        const segmento = document.getElementById('segmento').value;
+        const cnae = document.getElementById('cnae').value;
+        const fase = document.getElementById('fase').value;
+        let desafio = document.getElementById('desafio').value;
+
+        // Se o desafio estiver vazio, sugerir um baseado no segmento e fase
+        if (!desafio || desafio.trim() === "" || desafio.toLowerCase() === "quero sugestão baseada nas informações") {
+            desafio = sugerirDesafio(segmento, fase);
+        }
+
+        const prompt = `
+        Gerar uma solução personalizada com base nas seguintes informações:
+
+        1. *Segmento:* ${segmento}
+        2. *CNAE:* ${cnae}
+        3. *Fase do Negócio:* ${fase}
+        4. *Desafio:* ${desafio}
+
+        *Estrutura solicitada para a resposta:*
+
+        1. *Segmento: ${segmento}*  
+        Descrição breve sobre o segmento e o contexto relacionado à fase e ao desafio informado.
+
+        2. *Fase do Negócio: ${fase}*  
+        Detalhamento sobre a fase do negócio (Construção, Consolidação, Crescimento) e como ela impacta o desafio informado.
+
+        3. *Desafio:*  
+        Descrição do desafio enfrentado na fase do negócio, relacionado ao segmento informado. Caso o desafio não tenha sido fornecido, sugerir um desafio típico para o segmento e a fase escolhida.
+
+        4. *Breakdown:*  
+        - *Fornecemos suporte com apoio de conteúdo e tecnologia...*  
+        - Para *[detalhar a solução que resolve o desafio]*;  
+        - E *[como a solução otimiza ou resolve o desafio de forma prática]*;  
+        - Visando *[os objetivos principais e os resultados esperados com a implementação da solução]*.
+
+        5. *Proposta Única de Valor (PUV):*  
+        Nossa solução inclui *[tipo de solução personalizada, por exemplo: assessoria personalizada, acesso ao menu interativo exclusivo, etc.]*.  
+        - *Ele organiza categorias, tópicos e descrições*, oferecendo acesso imediato a:  
+          - *[Ferramentas e recursos aplicáveis ao desafio, por exemplo: ferramentas de gestão, metodologias específicas, insights, etc.]*;  
+          - *[Conteúdos educativos ou orientações alinhadas com os objetivos do cliente]*;  
+          - *[Outro conteúdo relevante que agregue valor à solução]*.
+
+        6. *Como Funciona:*  
+        - *Passo 1:* *[Descrição do primeiro passo na solução]*;  
+        - *Passo 2:* *[Descrição do segundo passo na solução]*;  
+        - *Passo 3:* *[Descrição do terceiro passo na solução]*.
+
+        7. *CTA:*  
+        *Não deixe que a falta de [resolver um ponto específico do desafio] atrapalhe o crescimento do seu negócio.*  
+        *Entre em contato agora e descubra como nossa solução personalizada pode transformar [especificar como a solução pode impactar positivamente o negócio].*
+        `;
+
+        document.getElementById('promptOutput').value = prompt;
+    }
+
+    // Função para sugerir um desafio com base no segmento e na fase
+    function sugerirDesafio(segmento, fase) {
+        if (segmento.toLowerCase().includes("software") && fase === "Crescimento") {
+            return "Escalar a equipe de desenvolvimento e otimizar a entrega de soluções personalizadas para um número maior de clientes.";
+        }
+        if (segmento.toLowerCase().includes("treinamentos corporativos") && fase === "Construção") {
+            return "Desenvolver uma infraestrutura e metodologia de treinamento eficaz para equipes iniciais.";
+        }
+        if (segmento.toLowerCase().includes("consultoria") && fase === "Consolidação") {
+            return "Ampliar a rede de clientes e melhorar a retenção dos existentes com serviços mais personalizados.";
+        }
+        if (segmento.toLowerCase().includes("terapia integrativa") && fase === "Crescimento") {
+            return "Expandir a base de clientes e otimizar os processos de atendimento e tratamento.";
+        }
+        // Exemplo genérico caso não seja possível identificar
+        return "Quero sugestão baseada nas informações fornecidas.";
+    }
+
+    // Função para aceitar a sugestão do desafio e preencher o campo
+    function aceitarSugestao() {
+        const segmento = document.getElementById('segmento').value;
+        const fase = document.getElementById('fase').value;
+        const desafioSugerido = sugerirDesafio(segmento, fase);
+        document.getElementById('desafio').value = desafioSugerido;
+        gerarPrompt(); // Regerar o prompt com o desafio aceito
+    }
+
+    // Função para copiar o conteúdo do prompt para o clipboard
+    function copiarPrompt() {
+        const promptText = document.getElementById('promptOutput').value;
+        navigator.clipboard.writeText(promptText).then(function() {
+            alert('Prompt copiado para o clipboard!');
+        }).catch(function(error) {
+            alert('Falha ao copiar o prompt: ' + error);
+        });
+    }
+</script>
+
+</body>
+</html>
